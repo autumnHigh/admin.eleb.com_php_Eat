@@ -177,6 +177,12 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        //阿里云oss存储文件的参数
+        Jacobcyl\AliOSS\AliOssServiceProvider::class,
+
+        //upedit编辑器的参数
+        Overtrue\LaravelUEditor\UEditorServiceProvider::class,
+
     ],
 
     /*
