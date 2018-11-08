@@ -12,7 +12,7 @@
 */
 
 Route::get('login', function () {
-    return view('session.create');
+    return view('session.add');
 });
 
 
