@@ -18,6 +18,7 @@ Route::get('/', function () {
 
 //抽奖系列的路由
     //抽奖活动表
+
 Route::resource('event','Admins\EventController');
     //抽奖活动奖品
 /*Route::post('evps/insert/{event}','Admins\EventPrizeController@insert')->name('evps.insert');*/
@@ -48,6 +49,8 @@ Route::get('user/warning/{user}','Admins\UserController@warning')->name('user.wa
 
 
 Route::resource('audit','Admins\AuditController');
+//错误信息界面路由
+Route::get('admin/error','Admins\AdminController@error')->name('admin.error');
 Route::resource('admin','Admins\AdminController');
 
 //Route::resource('session','Admins\SessionController');
@@ -80,3 +83,7 @@ Route::get('nav/twomenu','Admins\NavController@twomenu')->name('nav.twomenu');
 Route::post('nav/twostore','Admins\NavController@twostore')->name('nav.twostore');
 Route::get('nav/list','Admins\NavController@list')->name('nav.list');
 Route::resource('nav','Admins\NavController');
+
+
+//错误页面路由模块
+Route::get('');

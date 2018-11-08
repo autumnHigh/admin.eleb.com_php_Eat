@@ -15,4 +15,10 @@ class EventPrize extends Model
     public function getEvent(){
         return $this->belongsTo(Event::class,'events_id','id');
     }
+
+    //获得报名表 event_members 的数据
+    public function getUser(){
+        return $this->belongsTo(User::class,'members_id','id');
+    }
+
 }

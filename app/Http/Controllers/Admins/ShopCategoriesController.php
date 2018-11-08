@@ -6,14 +6,19 @@ use App\Models\Shops;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\ShopCategories;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Monolog\Handler\SamplingHandler;
+use Spatie\Permission\Models\Permission;
 
 class ShopCategoriesController extends Controller
 {
     //显示分类的添加表单
     public function create(){
+
+
+
         return view('shopcategories.add');
     }
 
@@ -77,7 +82,12 @@ class ShopCategoriesController extends Controller
     //回显编辑某条书
     public function edit($cate){
         //dd($cate);
+        //判断是否有权限可以执行该操作
 
+       // $user->hasPermissionTo(Permission::find(1)->id);
+        if(Auth::user()->can('/shopcategories/edit')){
+            return '没得权限';
+        }
 
         $cates=ShopCategories::where('id','=',$cate)->first();
         //dd($cates);

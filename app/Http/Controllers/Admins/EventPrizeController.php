@@ -110,19 +110,109 @@ class EventPrizeController extends Controller
     }
 
     //点击开奖按钮，运行的程序
-    public function lottery($evps,Request $request){
-      // dump($evps);
-       // $a=['1','23','2','16'];
-       // dump($a);
-       /* $b=array_rand($a);
-        dd($a[$b]);*/
-/*
-        shuffle($a);
-       dd(array_shift($a));*/
+    public function lottery(EventPrize $evenps,Request $request){
+      //dump($evenps);
 
-        //通过传入的id,得到抽奖活动的id
-        $evemps=EventPrize::where('id','=',$evps)->value('events_id');
-       // dump($evemps);
+      //得到 符合 试用活动的 奖品信息
+      $evps=EventPrize::where('events_id','=',$evenps->events_id)->get();
+
+     // dd($evps);
+        //循环奖品信息
+        //存储奖品信息的数据
+        $evpp=[];
+        //保存抽奖活动的id
+        $ev_id='';
+      foreach($evps as $evp){
+          //dump($evp);
+          $evpp[]=$evp;
+          $ev_id=$evp->getEvent->id;
+      }
+      //dump($evpp);
+
+
+        //随机从报名的人员中抽出两个人，获得试用活动的奖品
+
+        //1 获得试用活动的报名人员数据
+        $evmbs=DB::table('event_members')->where('events_id','=',$evenps->events_id)->get();
+        //遍历循环报名人数，
+      $evbbs=[];
+        foreach($evmbs as $evm){
+            $evbbs[]=$evm;
+        }
+
+
+        //dd($evbbs);
+        //########### 第一个中奖人  ######################3
+       shuffle($evbbs);//  ==》》【第一次】 打乱数组的排序
+       // dd($evbbs);
+      $ee=  array_shift($evbbs);//试用活动报名
+      //dump($ee);
+
+        $user1=User::where('id','=',$ee->member_id)->first();//得到 第一位 中奖用户的数据
+       // dump($user1->email);
+
+      $aa= array_shift($evpp);//试用活动奖品
+     //dump($aa);
+
+        //修改 第一个 用户中奖这的中间人的id到 奖品表 event_prizes 的 members_id中
+
+        $aa->update([
+            'member_id'=>$user1->id //第一个中奖人的id信息插入到表 event_prizes中
+        ]);
+        //收集第一个发送邮件模块
+        $data1=['name'=>$user1->name,'email'=>$user1->email,'prize'=>$aa->name];
+        //dump($data1);
+
+
+//################ //第二个中奖人   #############################
+        shuffle($evbbs);// ==》》【第二次】 打乱数组的排序
+      $rr=  array_shift($evbbs);
+      //dump($rr);
+
+        $user2=User::where('id','=',$rr->member_id)->first();//得到 第二位 中奖用户的数据
+
+      $bb=array_shift($evpp);
+      //dump($bb);
+        //修改 第二个 用户中奖这的中间人的id到 奖品表 event_prizes 的 members_id中
+        $bb->update([
+            'member_id'=>$user2->id //第二个中奖人的id信息插入到表 event_prizes中
+        ]);
+        //收集第二个发送邮件信息
+        $data2=['name'=>$user2->name,'email'=>$user2->email,'prize'=>$bb->name];
+
+        //修改活动表events 中的is_prize中奖字段 0 ==》1，修改event_prizes表中的字段 member_id= 中奖用户的id
+            $event=Event::where('id','=',$ev_id)->first();
+           // dd($event);
+            //执行修改is_prize字段为 1 开奖状态
+            $event->update([
+                'is_prize'=>1
+            ]);
+
+        //发送邮件模块
+        $this->send($data1);//发送第一个中奖人的邮件
+
+        $this->send($data2);//发送第二个中奖人邮件
+
+
+            return '试用活动发布成功！！';
+
+exit;
+
+        return redirect()->route('evps.index')->with('success','试用抽奖活动成功抽奖！！');
+
+
+        //点击开奖就获得抽奖活动信息
+       // dump($evenps->getEvent);
+
+
+        //通过 多层渲染得到 一对多的数据
+
+        //给每一个中奖的人员发送邮件
+
+
+      /*  //通过传入的id,得到抽奖活动的id
+         $evemps=EventPrize::where('id','=',$evps)->value('events_id');
+        // dump($evemps);
         //通过抽奖活动的id可以获得抽奖名单的人远
         $evmember=EventMember::where('events_id','=',$evemps)->pluck('member_id');
         //拿出来的是一个对象
@@ -180,8 +270,7 @@ class EventPrizeController extends Controller
 
         }else{
             return '奖品已经开奖';
-        }
-
+        }*/
 
     }
 
@@ -189,9 +278,9 @@ class EventPrizeController extends Controller
     //在添加用户的时候发送填写邮箱的邮件
     public function send($data){
 
-        Mail::send('emails',['name'=>$data['name']], function($message) use($data)
+        Mail::send('emails',['name'=>$data['name'],'prize'=>$data['prize']], function($message) use($data)
         {
-            $message->to($data['email'])->subject('中奖了，跟你一个没用的手机！');
+            $message->to($data['email'])->subject('中奖了，跟你一个没用的礼物gift！');
         });
 
     }

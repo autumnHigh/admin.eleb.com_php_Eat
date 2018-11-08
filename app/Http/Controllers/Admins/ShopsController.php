@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Shops;
 use App\Models\ShopCategories;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -159,6 +160,9 @@ class ShopsController extends Controller
 
     //编辑指定的某一条数据
     public function edit(Shops $shop){
+        if(!Auth::user()->can('/shops/edit')){
+            return redirect()->route('admin.error');
+        }
         //dump($shop);
         $shop_category_id=ShopCategories::all();
         return view('shops.edit',compact('shop','shop_category_id'));
@@ -246,6 +250,10 @@ class ShopsController extends Controller
 
     //删除指定的一条数据
     public function destroy(Shops $shop){
+
+        if(!Auth::user()->can('/shops/destroy')){
+            return redirect()->route('admin.error');
+        }
 
         //dd($shop->id);
         //查询得到图片的地址，上穿文件的文件库的文件，删除掉

@@ -24,15 +24,21 @@
                     过期活动
 
                 @else
-                    <a href="{{route('evps.edit',['evps'=>$evps])}}" class="btn btn-success">编辑</a>
 
-                    <a href="{{route('evps.lottery',['evps'=>$evps])}}" class="btn btn-danger">开奖</a>
 
-                    <form action="{{route('evps.destroy',[$evps])}}" method="post">
-                        {{csrf_field()}}
-                        {{method_field('DELETE')}}
-                        <button class="btn btn-warning">删除</button>
-                    </form>
+                    @if(!$evps->member_id != 0 )
+                       {{-- <a href="{{route('evps.lottery',['evps'=>$evps])}}" class="btn btn-danger" disabled="disabled">已开奖</a>--}}
+                        <a href="{{route('evps.edit',['evps'=>$evps])}}" class="btn btn-success">编辑</a>
+                        <a href="{{route('evps.lottery',['evps'=>$evps])}}" class="btn btn-danger">开奖</a>
+                        <form action="{{route('evps.destroy',[$evps])}}" method="post">
+                            {{csrf_field()}}
+                            {{method_field('DELETE')}}
+                            <button class="btn btn-warning">删除</button>
+                        </form>
+                    @else
+                        已经开奖！
+                    @endif
+
                 @endif
 
 

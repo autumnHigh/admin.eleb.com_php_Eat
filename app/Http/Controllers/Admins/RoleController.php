@@ -87,14 +87,15 @@ class RoleController extends Controller
         ]);
 
         //保存查询出来的权限对象到数组中，进行重新修改权限
-        $peress=[];
+      /*  $peress=[];
         foreach($request->permission as $p){
             //dump($p);
             $peress[]=Permission::where('id','=',$p)->first();
-        }
+        }*/
 
         //修改管理员角色表的时候，同时修改权限信息
-        $role->syncPermissions($peress);//修改的时候==》》不用管上面的是不是修改的时候得到的数据，直接使用，就删除前面的，插入现在的
+       // $role->syncPermissions($peress);//修改的时候==》》不用管上面的是不是修改的时候得到的数据，直接使用，就删除前面的，插入现在的
+        $role->syncPermissions($request->permission); //可以直接接受传递的数组 <==>  //修改的时候==》》不用管上面的是不是修改的时候得到的数据，直接使用，就删除前面的，插入现在的
 
         return '修改成功';
     }

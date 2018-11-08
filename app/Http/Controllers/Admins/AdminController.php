@@ -157,4 +157,9 @@ class AdminController extends Controller
         return redirect()->route('admin.index')->with('success','添加成功');
     }
 
+    //错误提示界面
+    public function error(){
+        return view('403.index');
+    }
+
 }

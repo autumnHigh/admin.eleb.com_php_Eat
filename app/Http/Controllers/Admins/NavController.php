@@ -10,6 +10,13 @@ use Spatie\Permission\Models\Permission;
 
 class NavController extends Controller
 {
+    public function __construct(){
+        $this->middleware('auth',[
+            'except'=>['index'],
+        ]);
+    }
+
+
     //显示添加节点的页面
     public function create(){
         //查询navs导航表的数据
@@ -38,19 +45,25 @@ class NavController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'pid' => 'required',
-            //'url' => 'required',
+            'url' => 'required',
         ],[
             'name.required'=>'菜单名不能为空',
             'pid.required'=>'上级菜单不能为空',
-            //'url.required'=>'节点不能为空',
+            'url.required'=>'节点不能为空',
         ])->validate();//自动回到提交错误信息的节点
 
-       // dd($_POST);
+       // $hav->hasPermission($request->url);
+        $aa=Permission::findByName($request->url);//查找权限表permissions的符合传入路由的数据信息
+        //dump($aa->id);
+
         Nav::create([
             'name'=>$request->name,
             'pid'=>$request->pid,
-            'url'=>$request->url
+            'url'=>$request->url,
+            'permission_id'=>$aa->id //存放权限的id进去
         ]);
+
+       //
 
         //return '添加一级菜单成功';
         return redirect()->route('nav.index')->with('success','添加导航成功');
@@ -100,7 +113,7 @@ class NavController extends Controller
 
     //编辑指定的一条数据
     public function edit(Nav $nav,Request $request){
-        dump($nav->url);
+       // dump($nav->url);
         //查询navs导航表中的的所有数据
         $navs=Nav::all();
         //dd($nav);
