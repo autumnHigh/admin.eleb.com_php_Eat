@@ -11,9 +11,10 @@
 |
 */
 
-Route::get('login', function () {
-    return view('session.add');
+Route::get('/', function () {
+    return view('welcome');
 });
+
 
 
 //抽奖系列的路由
@@ -86,4 +87,3 @@ Route::resource('nav','Admins\NavController');
 
 
 //错误页面路由模块
-Route::get('');
