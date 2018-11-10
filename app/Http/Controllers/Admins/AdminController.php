@@ -8,6 +8,7 @@ use App\Models\Admin;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
@@ -82,6 +83,14 @@ class AdminController extends Controller
         //dd($admin);
         $roless=DB::table('model_has_roles')->where('model_id','=',$admin->id)->get();
 //dd($roless);
+
+        $aa=$admin->hasAllRoles(Role::all());
+dump($aa);
+
+
+        //第二种模式测试
+        //查看权限表permissions的数据
+      //$permissions=  Permission::all();
 
         //保存查询出来的roles的数据
         $mhr=[];

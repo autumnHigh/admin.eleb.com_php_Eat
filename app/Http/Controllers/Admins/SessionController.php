@@ -23,16 +23,18 @@ class SessionController extends Controller
     //验证登陆
     public function store(Request $request){
 
-       /* $this->validate($request,[
-            'name'=>'required',
-            'password'=>'required',
-         /*   'captcha'=>'required|captcha',*/
-       // ],[
-         //   'name.required'=>'用户民不能为空',
-         //   'password.required'=>'密码不能为空',
-           /* 'captcha.required'=>'验证码不能为空',
-            'captcha.captcha'=>'验证码错误',*/
-      // ]);
+        $this->validate($request,[
+            'name'=>'required|between:2,6',
+            'password'=>'required|between:2,8',
+           // 'captcha'=>'required|captcha',
+        ],[
+            'name.required'=>'用户民不能为空',
+            'name.between'=>'用户名位数不对',
+           'password.required'=>'密码不能为空',
+           'password.between'=>'用户密码位数不对',
+            //'captcha.required'=>'验证码不能为空',
+            //'captcha.captcha'=>'验证码错误',
+       ]);
 
 
       //  $this->validate($request,[

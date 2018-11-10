@@ -38,7 +38,7 @@ class Nav extends Model
                     // dump($kk->id);
 
                     //验证是否拥有权限，可以显示菜单信息,直接使用rbac的
-                    if(Auth::user()->can($kk->url)){
+                    if(Auth::user()->can($kk->url)){//这里扫描的是权限表；permissions的数据？
                         $kid_kk .= '<li><a href="'.$kk->url.'">'.$kk->name.'</a></li>';
                     }
 

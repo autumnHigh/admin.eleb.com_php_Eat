@@ -34,11 +34,14 @@
     <div class="form-group">
         <label for="roles">角色:</label>
         @foreach($roles as $role)
-            @if(in_array($role->id,$mhr))
-            <input type="checkbox" name="roles[]" id="roles" checked="checked" value="{{$role->id}}"/>{{$role->name}}
+           {{-- @if(in_array($role->id,$mhr))
+                <input type="checkbox" name="roles[]" id="roles" checked="checked" value="{{$role->id}}"/>{{$role->name}}
             @else
                 <input type="checkbox" name="roles[]" id="roles" value="{{$role->id}}"/>{{$role->name}}
-            @endif
+            @endif--}}
+                    {{--如果回显的管理员的数据有默认角色，就默认勾选中。循环全部的角色信息   --}}
+            <input type="checkbox" name="roles[]" id="roles" value="{{$role->id}}" @if($admin->hasRole($role->name)) checked="checked" @endif/>{{$role->name}}
+
 
         @endforeach
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admins;
 
 use App\Models\Menu;
+use App\Models\Shops;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
@@ -74,7 +75,7 @@ $datas[]=$start;
 
         dump($datas,$months);
 
-    return view('ordersize.threemonth',compact('datas','months'));
+    return view('ordersize.threeMonthMenu',compact('datas','months'));
 
     }
 
@@ -321,6 +322,137 @@ $rowss=$rows;
 
         //dump($series);
         return view("ordersize.threeMonthMenu",compact('result','months','menus','series','year'));
+
+    }
+
+    //最近一周平台查看商家菜品销量统计
+    public function weekShop(){
+        //dd(111);
+
+        $start=date('Y-m-d',strtotime('-6 day'));
+        $end=date('Y-m-d',strtotime('+0 day'));
+       // dd($start,$end);
+        //根据原声sql查询数据
+        $rows=DB::select("select DATE(o.created_at) as date,o.shop_id,sum(od.amount) as total from orders o left join order_details od on od.order_id=o.id where DATE(o.created_at) >= ? and DATE(o.created_at) <= ? group by DATE(o.created_at),o.shop_id",[$start,$end]);
+        //dd($rows);
+      //  $shops=Shops::where('id','=',32)->select('id','shop_name')->get();
+        $shops=Shops::select('id','shop_name')->get();
+       // dd($rows,$shops);
+        $keyed = $shops->mapWithKeys(function ($item) {
+            return [$item['id'] => $item['shop_name']];
+        });
+            $shop=$keyed->all();
+           // dd($shop);
+
+
+        //构造7天统计格式
+        $result = [];
+            //得到一周的日期
+        $week=[];
+        for ($i=6;$i>=0;--$i){
+            $week[] = date('Y-m-d',strtotime("-{$i} day"));
+        }
+        //把商铺的数组形成 新的数组循环
+        foreach ($shop as $id=>$name){
+           // dump($id);
+            foreach ($week as $day){
+                $result[$id][$day] = 0;
+            }
+        }
+        //dump($result,$week);
+//dd($rows);
+        foreach ($rows as $row){
+            $result[$row->shop_id][$row->date]=$row->total;
+        }
+
+
+       // dd($result);
+
+        $series=[];
+        foreach ($result as $id=>$data){
+            $serie = [
+                'name'=> $shop[$id],
+                'type'=>'line',
+                //'stack'=> '销量',
+                'data'=>array_values($data)
+            ];
+            $series[] = $serie;
+        }
+
+
+        return view('ordersize.weekShop',compact('result','shop','week','series'));
+    }
+
+    //得到三个月份的商家菜品销售报表
+    public function threeMonthK(){
+
+
+        $start = date('m',strtotime("-2 month"));
+        $end = date('m',strtotime("+0 month"));
+
+        //$aa=DB::select("select count(*) from `orders` where date_format(`created_at`,'%V')=? and date_format(`created_at`,'%V')=?",[$start,$end]);
+        //dd($aa);
+
+       // dump($start,$end);
+
+        $rows=DB::select("select MONTH(o.created_at) as date,o.shop_id,sum(od.amount) as total from orders o left join order_details od on od.order_id=o.id where Month(o.created_at) >= ? and Month(o.created_at) <= ? group by Month(o.created_at),o.shop_id",[$start,$end]);
+        //查询商铺表的数据
+        $shops=Shops::select('id','shop_name')->get();
+        //dd($shops);
+
+        //把查询出来的商铺数据，变更为一个一维数组
+        $keyed = $shops->mapWithKeys(function ($item) {
+            return [$item['id'] => $item['shop_name']];
+        });
+
+        $shop=$keyed->all();
+        //dump($shop);
+
+
+        //存储显示数据
+        $result=[];
+        //创建 月份日期时间
+        $months=[];
+        for($i=2;$i>=0;--$i){
+           // dump($i);
+            $months[]=date('Y-').date('m',strtotime("-{$i} month"));
+        }
+
+       //dd($months);
+//dd($rows);
+   // dump($shop,$months);
+
+        foreach($shop as $id=>$name){
+            //循环往字段中添加 时间
+            foreach($months as $month){
+                $result[$id][$month]=0;//查询出来的商铺有多少就填充多少0
+            }
+        }
+        //dd($result);
+       // dd($shop[$id],$result);
+
+        foreach($rows as $row){
+        //dump($row->total);
+            $result[$row->shop_id][date('Y-').$row->date]=$row->total;
+        }
+
+        //dd($result);
+        $series=[];
+        foreach ($result as $id=>$data){
+            $serie = [
+                'name'=> $shop[$id],
+                'type'=>'line',
+                //'stack'=> '总量',
+                'data'=>array_values($data)
+            ];
+            $series[] = $serie;
+        }
+
+
+        return view('ordersize.threeMonthK',compact('result','shop','months','series'));
+
+
+
 
     }
 

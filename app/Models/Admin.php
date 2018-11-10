@@ -11,7 +11,7 @@ class Admin extends \Illuminate\Foundation\Auth\User
 {
     use Notifiable;
 
-    use HasRoles;
+    use HasRoles;//rbac
 
     //声明要操作得标
     protected $table='admins';

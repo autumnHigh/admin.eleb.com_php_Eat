@@ -72,6 +72,11 @@ Route::get('order/threemonth','Admins\OrderController@threemonth')->name('order.
 Route::get('order/weekMenu','Admins\OrderController@weekMenu')->name('order.weekMenu');
 //统计三个月的商家菜品的销售统计
 Route::get('order/threeMonthMenu','Admins\OrderController@threeMonthMenu')->name('order.threeMonthMenu');
+//统计三个月的商家销售报表
+Route::get('order/threeMonthK','Admins\OrderController@threeMonthK')->name('order.threeMonthK');
+
+//最近一周商户商家销量统计
+Route::get('order/weekShop','Admins\OrderController@weekShop')->name('order.weekShop');
 
 //添加权限
 Route::resource('permission','Admins\PermissionController');
